@@ -48,11 +48,13 @@ SEX:
 
 . label values FEMALE femaleLAB
 
+. label variable FEMALE "Female"
+
 . 
 . *Check if the indicator has been defined correctly
 . tab SEX FEMALE                  
 
-           |        FEMALE
+           |        Female
        Sex |      Male     Female |     Total
 -----------+----------------------+----------
     Female |         0    224,586 |   224,586 
@@ -63,8 +65,7 @@ SEX:
 . *Do the similar to other variables
 . 
 . *COW 
-. *This is not a variable in the model but needs to be modified for sampling restrct
-> ion
+. *This is not a variable in the model but needs to be modified for sampling restrction
 . *Drop unavailable observations
 . drop if COW == 7 | COW == 8
 (16,018 observations deleted)
@@ -104,14 +105,12 @@ AGEGRP:
 . drop if AGEGRP <= 5
 (0 observations deleted)
 
-. *Note: WAGES == 0 | 1 overlaps the under working-age population, so we may see "0 
-> obs droped" in this step
+. *Note: WAGES == 0 | 1 overlaps the under working-age population, so we may see "0 obs droped" in this step
 . *Drop unavailable observations from AGEGRP
 . drop if AGEGRP == 22 | AGEGRP == .
 (2,033 observations deleted)
 
-. *Create a numerical variable for age, taking values of the rounded median of AGEGR
-> P
+. *Create a numerical variable for age, taking values of the rounded median of AGEGRP
 . gen AGE = 16
 
 . replace AGE = 19 if AGEGRP == 7
@@ -165,18 +164,22 @@ AGEGRP:
 . *Variables for robustness check
 . gen FEM_AGE = FEMALE*AGE
 
+. label variable FEM_AGE "Female*Age"
+
 . gen AGE_2 = AGE^2
 
+. label variable AGE_2 "Age^2"
+
 . gen FEM_AGE_2 = FEMALE*AGE_2
+
+. label variable FEM_AGE_2 "Female*Age^2"
 
 . ************************************************
 . *Create a variable for potential experience
 . 
-. *I plan to use potential experience in my formal model, age will be used for robus
-> tness check
-. *potential experience = age - years of education - 6, years of education is the ex
-> pected length of each degree, 6 represents the expected age in the first year of s
-> chool
+. *I plan to use potential experience in my formal model, age will be used for robustness check
+. *potential experience = age - years of education - 6, years of education is the expected length of each degree, 6 represents the expe
+> cted age in the first year of school
 . gen SCHOOLYRS = .
 (418,840 missing values generated)
 
@@ -207,8 +210,9 @@ AGEGRP:
 . gen POTENEXP = AGE - SCHOOLYRS - 6
 (2,245 missing values generated)
 
-. *A negative value is most likely to mean that the individual finished the degree f
-> aster than expected
+. label variable POTENEXP "Potential experience"
+
+. *A negative value is most likely to mean that the individual finished the degree faster than expected
 . *Drop these negative potential experiences because they don't fit in the context
 . drop if POTENEXP <= 0 | POTENEXP == . 
 (26,110 observations deleted)
@@ -217,10 +221,16 @@ AGEGRP:
 . *Create a quadratic term
 . gen POTENEXP_2 = POTENEXP^2
 
+. label variable POTENEXP_2 "Potential experience^2"
+
 . *Create interactions
 . gen FEM_POTENEXP = FEMALE*POTENEXP
 
+. label variable FEM_POTENEXP "Female*Potential experience"
+
 . gen FEM_POTENEXP_2 = FEMALE*POTENEXP_2
+
+. label variable FEM_POTENEXP_2 "Female*Potential experience^2"
 
 . *************************************************
 . 
@@ -301,14 +311,30 @@ PKID15_24:
 
 . label values YOUTH childlab
 
+. label variable INFANT "Infant"
+
+. label variable PRESCHOOLER "preschooler"
+
+. label variable SCHOOLAGE "school-age children"
+
+. label variable YOUTH "Youth-age children" 
+
 . *Interact with gender
 . gen FEM_INFANT = FEMALE*INFANT
 
+. label variable FEM_INFANT "Female*Infant"
+
 . gen FEM_PRESCHOOLER = FEMALE*PRESCHOOLER
+
+. label variable FEM_PRESCHOOLER "Female*Preschooler"
 
 . gen FEM_SCHOOLAGE = FEMALE*SCHOOLAGE
 
+. label variable FEM_SCHOOLAGE "Female*Schoolage"
+
 . gen FEM_YOUTH = FEMALE*YOUTH
+
+. label variable FEM_YOUTH "Female*Youth"
 
 . *******************************************
 . 
@@ -319,12 +345,9 @@ HDGREE:
            2 High school diploma or equivalent
            3 Trades certificate or diploma (other than apprenticeship)
            4 Registered Apprenticeship certificate
-           5 College,CEGEPorothernon-universitycertificatordiplomfromaprgrmof3mnthst
-> lssthn1yr
-           6 College,CEGEPorothernon-universitycertificateordiplomafromaprogramof1ye
-> art2years
-           7 College,CEGEPorothernon-universitycertificateordiplomfromaprogramofmort
-> han2years
+           5 College,CEGEPorothernon-universitycertificatordiplomfromaprgrmof3mnthstlssthn1yr
+           6 College,CEGEPorothernon-universitycertificateordiplomafromaprogramof1yeart2years
+           7 College,CEGEPorothernon-universitycertificateordiplomfromaprogramofmorthan2years
            8 University certificate or diploma below bachelor level
            9 Bachelor's degree
           10 University certificate or diploma above bachelor level
@@ -354,8 +377,7 @@ NAICS:
           10 52 Finance and insurance/55 Management of companies and enterprises
           11 53 Real estate and rental and leasing
           12 54 Professional, scientific and technical services
-          13 56 Administrative and support, waste management and remediation service
-> s
+          13 56 Administrative and support, waste management and remediation services
           14 61 Educational services
           15 62 Health care and social assistance
           16 71 Arts, entertainment and recreation
@@ -379,8 +401,7 @@ NAICS:
 . drop if WKSWRK == 8 | WKSWRK == . | WKSWRK == 1
 (3,130 observations deleted)
 
-. *Take the rounded median of each category to make a numercial variable for length 
-> of work
+. *Take the rounded median of each category to make a numercial variable for length of work
 . gen WEEKWRK = 5
 
 . replace WEEKWRK = 15 if WKSWRK == 3
@@ -420,11 +441,35 @@ NAICS:
 . *Interact with gender
 . gen FEM_MAR = FEMALE*MARRIED
 
+. label variable FEM_MAR "Female*Marital status"
+
+. 
+. *Visible minority
+. *get rid off unavailable data
+. drop if VISMIN == 88 | VISMIN == .
+(0 observations deleted)
+
+. *create a dummy for visible minority
+. gen MINORITY = 1
+
+. replace MINORITY = 0 if VISMIN == 13
+(254,814 real changes made)
+
+. label define minlab 1 "Visible minority" 0 "Not a visible minority"
+
+. label values MINORITY minlab
+
+. label variable MINORITY "Visible minority"
+
+. *Interacts with gender
+. gen FEM_MIN = FEMALE*MINORITY
+
+. label variable FEM_MIN "Female*Minority"
+
 . 
 . *Descriptive statistics
-. summ lnWAGES FEMALE FEM_POTENEXP FEM_POTENEXP_2 FEM_MAR FEM_INFANT FEM_PRESCHOOLER
->  FEM_SCHOOLAGE FEM_YOUTH INFANT PRESCHOOLER SCHOOLAGE YOUTH MARRIED POTENEXP POTEN
-> EXP_2 i.NAIC i.HDGREE i.PR WEEKWRK
+. summ lnWAGES FEMALE FEM_POTENEXP FEM_POTENEXP_2 FEM_MAR FEM_INFANT FEM_PRESCHOOLER FEM_SCHOOLAGE FEM_YOUTH FEM_MIN INFANT PRESCHOOLER
+>  SCHOOLAGE YOUTH MARRIED POTENEXP POTENEXP_2 i.NAIC i.HDGREE i.PR WEEKWRK MINORITY
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
@@ -438,164 +483,172 @@ FEM_POTENE~2 |    312,241    302.5667    508.1576          0       4624
 FEM_PRESCH~R |    312,241    .0609849    .2393031          0          1
 FEM_SCHOOL~E |    312,241    .1283368    .3344649          0          1
    FEM_YOUTH |    312,241    .1805368    .3846346          0          1
-      INFANT |    312,241    .0742664    .2622043          0          1
+     FEM_MIN |    312,241    .0920571     .289107          0          1
 -------------+---------------------------------------------------------
+      INFANT |    312,241    .0742664    .2622043          0          1
  PRESCHOOLER |    312,241    .1290157    .3352179          0          1
    SCHOOLAGE |    312,241     .251434    .4338382          0          1
        YOUTH |    312,241    .3536179    .4780931          0          1
      MARRIED |    312,241    .6055611    .4887306          0          1
-    POTENEXP |    312,241     21.4113    12.86543          1         68
 -------------+---------------------------------------------------------
+    POTENEXP |    312,241     21.4113    12.86543          1         68
   POTENEXP_2 |    312,241    623.9625    601.5509          1       4624
              |
        NAICS |
 11 Agricu..  |    312,241    .0137138    .1163002          0          1
 21 Mining..  |    312,241    .0147386    .1205049          0          1
 22 Utilit..  |    312,241    .0098001    .0985094          0          1
-23 Constr..  |    312,241    .0561041     .230123          0          1
 -------------+---------------------------------------------------------
+23 Constr..  |    312,241    .0561041     .230123          0          1
 31-33 Man..  |    312,241    .1044994    .3059078          0          1
 41 Wholes..  |    312,241    .0458396    .2091374          0          1
 44-45 Ret..  |    312,241    .1198722    .3248125          0          1
 48-49 Tra..  |    312,241    .0470822    .2118151          0          1
-51 Inform..  |    312,241    .0238374    .1525425          0          1
 -------------+---------------------------------------------------------
+51 Inform..  |    312,241    .0238374    .1525425          0          1
 52 Financ..  |    312,241     .050477    .2189275          0          1
 53 Real e..  |    312,241    .0143447    .1189074          0          1
 54 Profes..  |    312,241    .0609433    .2392267          0          1
 56 Admini..  |    312,241    .0355783    .1852366          0          1
-61 Educat..  |    312,241    .0877816    .2829774          0          1
 -------------+---------------------------------------------------------
+61 Educat..  |    312,241    .0877816    .2829774          0          1
 62 Health..  |    312,241    .1159649    .3201834          0          1
 71 Arts, ..  |    312,241    .0176274    .1315931          0          1
 72 Accomm..  |    312,241    .0585541    .2347887          0          1
 81 Other..)  |    312,241    .0375095     .190007          0          1
-91 Public..  |    312,241    .0857319    .2799681          0          1
 -------------+---------------------------------------------------------
+91 Public..  |    312,241    .0857319    .2799681          0          1
              |
       HDGREE |
 No certif..  |    312,241    .0955288    .2939444          0          1
 High scho..  |    312,241     .268581    .4432222          0          1
 Trades c..)  |    312,241    .0612636    .2398135          0          1
 Registere..  |    312,241    .0438315    .2047204          0          1
-College,C..  |    312,241    .0255412    .1577622          0          1
 -------------+---------------------------------------------------------
+College,C..  |    312,241    .0255412    .1577622          0          1
 College,C..  |    312,241    .1079743    .3103484          0          1
 College,C..  |    312,241    .0934727    .2910941          0          1
 Universit..  |    312,241    .0498877    .2177134          0          1
 Bachelor'..  |    312,241    .1634731    .3697973          0          1
-Universit..  |    312,241    .0268286    .1615826          0          1
 -------------+---------------------------------------------------------
+Universit..  |    312,241    .0268286    .1615826          0          1
 Degree in..  |    312,241    .0032347    .0567823          0          1
 Master's ..  |    312,241    .0520591    .2221467          0          1
 Earned do..  |    312,241    .0083237     .090854          0          1
              |
           PR |
 Newfoundl..  |    312,241    .0155425    .1236971          0          1
-Prince Ed..  |    312,241    .0042211    .0648328          0          1
 -------------+---------------------------------------------------------
+Prince Ed..  |    312,241    .0042211    .0648328          0          1
 Nova Scotia  |    312,241    .0268543    .1616576          0          1
 New Bruns..  |    312,241     .022742    .1490802          0          1
      Quebec  |    312,241    .2369804    .4252308          0          1
     Ontario  |    312,241    .3931354    .4884473          0          1
-   Manitoba  |    312,241    .0342268    .1818114          0          1
 -------------+---------------------------------------------------------
+   Manitoba  |    312,241    .0342268    .1818114          0          1
 Saskatche~n  |    312,241    .0273603    .1631312          0          1
     Alberta  |    312,241    .1115356    .3147948          0          1
 British C..  |    312,241    .1251854    .3309295          0          1
 Northern ..  |    312,241    .0022162    .0470248          0          1
+-------------+---------------------------------------------------------
              |
      WEEKWRK |    312,241    43.83447    12.50029          5         51
+    MINORITY |    312,241    .1839188    .3874186          0          1
 
-.         
+. 
 . *Fit a regression model
-. reg lnWAGES FEMALE FEM_POTENEXP FEM_POTENEXP_2 FEM_MAR FEM_INFANT FEM_PRESCHOOLER 
-> FEM_SCHOOLAGE FEM_YOUTH INFANT PRESCHOOLER SCHOOLAGE YOUTH MARRIED POTENEXP POTENE
-> XP_2 i.NAIC i.HDGREE i.PR WEEKWRK
+. reg lnWAGES FEMALE FEM_POTENEXP FEM_POTENEXP_2 FEM_MAR FEM_INFANT FEM_PRESCHOOLER FEM_SCHOOLAGE FEM_YOUTH FEM_MIN INFANT PRESCHOOLER 
+> SCHOOLAGE YOUTH MARRIED POTENEXP POTENEXP_2 MINORITY i.NAIC i.HDGREE i.PR WEEKWRK
 
       Source |       SS           df       MS      Number of obs   =   312,241
--------------+----------------------------------   F(56, 312184)   =   5990.50
-       Model |  175670.955        56  3136.98135   Prob > F        =    0.0000
-    Residual |  163477.954   312,184  .523658976   R-squared       =    0.5180
--------------+----------------------------------   Adj R-squared   =    0.5179
-       Total |  339148.909   312,240  1.08618021   Root MSE        =    .72364
+-------------+----------------------------------   F(58, 312182)   =   5911.73
+       Model |  177521.317        58  3060.71236   Prob > F        =    0.0000
+    Residual |  161627.592   312,182  .517735142   R-squared       =    0.5234
+-------------+----------------------------------   Adj R-squared   =    0.5233
+       Total |  339148.909   312,240  1.08618021   Root MSE        =    .71954
 
------------------------------------------------------------------------------------
-          lnWAGES |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
-------------------+----------------------------------------------------------------
-           FEMALE |  -.0684095    .008074    -8.47   0.000    -.0842344   -.0525847
-     FEM_POTENEXP |  -.0092522   .0007911   -11.70   0.000    -.0108027   -.0077018
-   FEM_POTENEXP_2 |   .0001115   .0000167     6.68   0.000     .0000788    .0001442
-          FEM_MAR |   -.091708   .0062642   -14.64   0.000    -.1039856   -.0794304
-       FEM_INFANT |  -.1102541   .0107139   -10.29   0.000    -.1312531   -.0892552
-  FEM_PRESCHOOLER |  -.0829935   .0085234    -9.74   0.000    -.0996991   -.0662879
-    FEM_SCHOOLAGE |  -.0885335   .0064642   -13.70   0.000    -.1012031    -.075864
-        FEM_YOUTH |  -.0389175   .0057515    -6.77   0.000    -.0501904   -.0276447
-           INFANT |    .073409   .0072653    10.10   0.000     .0591693    .0876487
-      PRESCHOOLER |   .0548959   .0059244     9.27   0.000     .0432841    .0665077
-        SCHOOLAGE |  -.0018075   .0045856    -0.39   0.693    -.0107952    .0071802
-            YOUTH |  -.0379644   .0041275    -9.20   0.000    -.0460542   -.0298746
-          MARRIED |   .0903896   .0047001    19.23   0.000     .0811776    .0996016
-         POTENEXP |   .0676846   .0005665   119.47   0.000     .0665743     .068795
-       POTENEXP_2 |  -.0011606   .0000115  -100.52   0.000    -.0011832    -.001138
-                  |
-            NAICS |
-21 Mining, qua..  |    .770151     .01554    49.56   0.000     .7396931    .8006089
-    22 Utilities  |   .6049754   .0172417    35.09   0.000     .5711821    .6387686
- 23 Construction  |   .2720978   .0124191    21.91   0.000     .2477566     .296439
-31-33 Manufact..  |   .2184803   .0118404    18.45   0.000     .1952734    .2416871
-41 Wholesale t..  |   .2497627    .012692    19.68   0.000     .2248869    .2746386
-44-45 Retail t..  |   -.148115   .0117635   -12.59   0.000    -.1711711   -.1250589
-48-49 Transpor..  |   .1524435   .0126234    12.08   0.000     .1277019     .177185
-51 Information..  |   .2694807   .0140085    19.24   0.000     .2420245    .2969369
-52 Finance and..  |   .3631824   .0126574    28.69   0.000     .3383742    .3879905
-53 Real estate..  |   .0511314   .0155415     3.29   0.001     .0206704    .0815924
-54 Professiona..  |    .266933    .012423    21.49   0.000     .2425843    .2912816
-56 Administrat..  |  -.1030158   .0130696    -7.88   0.000     -.128632   -.0773997
-61 Educational..  |   .1044981   .0121775     8.58   0.000     .0806306    .1283656
-62 Health care..  |   .1434483   .0119309    12.02   0.000      .120064    .1668326
-71 Arts, enter..  |  -.1291705   .0148164    -8.72   0.000    -.1582102   -.1001308
-72 Accommodati..  |  -.3101039   .0123893   -25.03   0.000    -.3343867   -.2858212
-81 Other serv..)  |  -.0662691    .013016    -5.09   0.000    -.0917801   -.0407582
-91 Public admi..  |   .3527505   .0120471    29.28   0.000     .3291386    .3763625
-                  |
-           HDGREE |
-High school di..  |   .1055612   .0049718    21.23   0.000     .0958167    .1153057
-Trades certif..)  |   .1690308   .0068518    24.67   0.000     .1556014    .1824602
-Registered App..  |   .3119812   .0076556    40.75   0.000     .2969764     .326986
-College,CEGEPo..  |   .1801854   .0092566    19.47   0.000     .1620428     .198328
-College,CEGEPo..  |   .2647988   .0059598    44.43   0.000     .2531177    .2764798
-College,CEGEPo..  |   .3665793   .0061791    59.33   0.000     .3544684    .3786902
-University cer..  |   .3572948   .0073233    48.79   0.000     .3429413    .3716483
-Bachelor's deg..  |   .5624068   .0057088    98.52   0.000     .5512178    .5735959
-University cer..  |    .607242   .0093046    65.26   0.000     .5890053    .6254787
-Degree in medi..  |   .8274787   .0233671    35.41   0.000     .7816797    .8732776
- Master's degree  |    .664093    .007488    88.69   0.000     .6494168    .6787693
-Earned doctora..  |   .8266071   .0151911    54.41   0.000      .796833    .8563812
-                  |
-               PR |
-Prince Edward ..  |  -.0404988   .0224933    -1.80   0.072    -.0845849    .0035874
-     Nova Scotia  |  -.0541712   .0130665    -4.15   0.000    -.0797811   -.0285614
-   New Brunswick  |  -.0410928   .0134893    -3.05   0.002    -.0675315    -.014654
-          Quebec  |  -.0262989   .0107889    -2.44   0.015    -.0474448    -.005153
-         Ontario  |   .0383354    .010631     3.61   0.000      .017499    .0591719
-        Manitoba  |  -.0138898   .0125511    -1.11   0.268    -.0384897      .01071
-    Saskatchewan  |   .0869516   .0130298     6.67   0.000     .0614136    .1124896
-         Alberta  |   .1726282   .0111207    15.52   0.000     .1508319    .1944245
-British Columbia  |   .0234859   .0110396     2.13   0.033     .0018487    .0451231
- Northern Canada  |   .2582391    .029461     8.77   0.000     .2004965    .3159818
-                  |
-          WEEKWRK |   .0348956   .0001104   316.21   0.000     .0346793    .0351119
-            _cons |   7.752178   .0166188   466.47   0.000     7.719605     7.78475
------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------
+                                                             lnWAGES |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+---------------------------------------------------------------------+----------------------------------------------------------------
+                                                              FEMALE |  -.0936654   .0081201   -11.53   0.000    -.1095806   -.0777502
+                                                        FEM_POTENEXP |  -.0087154   .0007869   -11.08   0.000    -.0102578   -.0071731
+                                                      FEM_POTENEXP_2 |   .0001117   .0000166     6.74   0.000     .0000792    .0001442
+                                                             FEM_MAR |  -.1096179   .0062728   -17.47   0.000    -.1219125   -.0973233
+                                                          FEM_INFANT |  -.1148018   .0106541   -10.78   0.000    -.1356836     -.09392
+                                                     FEM_PRESCHOOLER |  -.0868251   .0084755   -10.24   0.000    -.1034367   -.0702134
+                                                       FEM_SCHOOLAGE |  -.0922907   .0064299   -14.35   0.000    -.1048931   -.0796883
+                                                           FEM_YOUTH |  -.0432066   .0057242    -7.55   0.000    -.0544259   -.0319873
+                                                             FEM_MIN |   .1362378   .0067493    20.19   0.000     .1230093    .1494662
+                                                              INFANT |   .0739872   .0072241    10.24   0.000     .0598282    .0881462
+                                                         PRESCHOOLER |   .0601328   .0058916    10.21   0.000     .0485855    .0716801
+                                                           SCHOOLAGE |   .0055983   .0045617     1.23   0.220    -.0033425     .014539
+                                                               YOUTH |  -.0286868   .0041077    -6.98   0.000    -.0367378   -.0206359
+                                                             MARRIED |   .1144942      .0047    24.36   0.000     .1052824     .123706
+                                                            POTENEXP |   .0672461   .0005634   119.35   0.000     .0661418    .0683504
+                                                          POTENEXP_2 |  -.0011663   .0000115  -101.58   0.000    -.0011888   -.0011438
+                                                            MINORITY |  -.2666706    .004896   -54.47   0.000    -.2762666   -.2570747
+                                                                     |
+                                                               NAICS |
+                   21 Mining, quarrying, and oil and gas extraction  |    .764574   .0154521    49.48   0.000     .7342882    .7948597
+                                                       22 Utilities  |   .6046621    .017144    35.27   0.000     .5710603    .6382639
+                                                    23 Construction  |   .2747466   .0123488    22.25   0.000     .2505433      .29895
+                                                31-33 Manufacturing  |   .2468979   .0117829    20.95   0.000     .2238037    .2699922
+                                                 41 Wholesale trade  |   .2698925   .0126246    21.38   0.000     .2451487    .2946363
+                                                 44-45 Retail trade  |  -.1247108   .0117042   -10.66   0.000    -.1476507   -.1017709
+                               48-49 Transportation and warehousing  |   .1748481   .0125581    13.92   0.000     .1502346    .1994617
+                             51 Information and cultural industries  |   .2907713   .0139345    20.87   0.000     .2634601    .3180826
+52 Finance and insurance/55 Management of companies and enterprises  |   .3886208   .0125932    30.86   0.000     .3639384    .4133031
+                              53 Real estate and rental and leasing  |   .0705937   .0154575     4.57   0.000     .0402973      .10089
+                 54 Professional, scientific and technical services  |    .288156   .0123587    23.32   0.000     .2639333    .3123787
+56 Administrative and support, waste management and remediation s..  |  -.0692191   .0130081    -5.32   0.000    -.0947145   -.0437237
+                                            61 Educational services  |   .1019498   .0121142     8.42   0.000     .0782062    .1256933
+                               62 Health care and social assistance  |   .1616928   .0118686    13.62   0.000     .1384306     .184955
+                              71 Arts, entertainment and recreation  |   -.121083   .0147348    -8.22   0.000    -.1499628   -.0922032
+                                 72 Accommodation and food services  |    -.27033   .0123375   -21.91   0.000    -.2945111   -.2461489
+                   81 Other services (except public administration)  |  -.0465441   .0129467    -3.60   0.000    -.0719193    -.021169
+                                           91 Public administration  |   .3547341   .0119802    29.61   0.000     .3312532    .3782151
+                                                                     |
+                                                              HDGREE |
+                                  High school diploma or equivalent  |   .1017709    .004945    20.58   0.000     .0920788     .111463
+          Trades certificate or diploma (other than apprenticeship)  |   .1617005   .0068141    23.73   0.000      .148345     .175056
+                              Registered Apprenticeship certificate  |   .2934858   .0076194    38.52   0.000     .2785519    .3084197
+College,CEGEPorothernon-universitycertificatordiplomfromaprgrmof3..  |   .1738729   .0092065    18.89   0.000     .1558285    .1919173
+College,CEGEPorothernon-universitycertificateordiplomafromaprogra..  |   .2578808   .0059289    43.50   0.000     .2462602    .2695014
+College,CEGEPorothernon-universitycertificateordiplomfromaprogram..  |   .3654245   .0061444    59.47   0.000     .3533816    .3774675
+             University certificate or diploma below bachelor level  |   .3869609   .0072995    53.01   0.000     .3726541    .4012677
+                                                  Bachelor's degree  |   .5808603   .0056849   102.18   0.000     .5697181    .5920025
+             University certificate or diploma above bachelor level  |    .631106   .0092604    68.15   0.000     .6129558    .6492562
+    Degree in medicine, dentistry, veterinary medicine or optometry  |   .8636332    .023243    37.16   0.000     .8180777    .9091888
+                                                    Master's degree  |   .6892901   .0074574    92.43   0.000     .6746737    .7039064
+                                            Earned doctorate degree  |    .857698   .0151139    56.75   0.000     .8280752    .8873207
+                                                                     |
+                                                                  PR |
+                                               Prince Edward Island  |  -.0374473   .0223657    -1.67   0.094    -.0812835    .0063889
+                                                        Nova Scotia  |  -.0499711   .0129926    -3.85   0.000    -.0754362   -.0245061
+                                                      New Brunswick  |  -.0399461   .0134129    -2.98   0.003    -.0662349   -.0136572
+                                                             Quebec  |  -.0096813   .0107317    -0.90   0.367    -.0307152    .0113525
+                                                            Ontario  |   .0804239   .0105979     7.59   0.000     .0596524    .1011955
+                                                           Manitoba  |   .0102774   .0124876     0.82   0.411    -.0141979    .0347527
+                                                       Saskatchewan  |   .0966284   .0129569     7.46   0.000     .0712331    .1220236
+                                                            Alberta  |   .2045553   .0110721    18.47   0.000     .1828543    .2262563
+                                                   British Columbia  |   .0730734   .0110139     6.63   0.000     .0514865    .0946604
+                                                    Northern Canada  |   .2664557   .0292942     9.10   0.000     .2090399    .3238715
+                                                                     |
+                                                             WEEKWRK |   .0346067   .0001098   315.05   0.000     .0343914     .034822
+                                                               _cons |   7.754988   .0165275   469.22   0.000     7.722594    7.787381
+--------------------------------------------------------------------------------------------------------------------------------------
 
 . estimates store model_int
 
 . 
+. outreg2 using "myoutreg.xls", replace ctitle(Model1) label dec(3)
+myoutreg.xls
+dir : seeout
+
+. 
 . *Robustness check
-. summ lnWAGES FEMALE FEM_AGE FEM_AGE_2 FEM_MAR FEM_INFANT FEM_PRESCHOOLER FEM_SCHOO
-> LAGE FEM_YOUTH INFANT PRESCHOOLER SCHOOLAGE YOUTH MARRIED AGE AGE_2 i.NAIC i.HDGRE
-> E i.PR WEEKWRK
+. summ lnWAGES FEMALE FEM_AGE FEM_AGE_2 FEM_MAR FEM_INFANT FEM_PRESCHOOLER FEM_SCHOOLAGE FEM_YOUTH FEM_MIN INFANT PRESCHOOLER SCHOOLAGE
+>  YOUTH MARRIED AGE AGE_2 i.NAIC i.HDGREE i.PR WEEKWRK MINORITY
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
@@ -609,159 +662,169 @@ British Columbia  |   .0234859   .0110396     2.13   0.033     .0018487    .0451
 FEM_PRESCH~R |    312,241    .0609849    .2393031          0          1
 FEM_SCHOOL~E |    312,241    .1283368    .3344649          0          1
    FEM_YOUTH |    312,241    .1805368    .3846346          0          1
-      INFANT |    312,241    .0742664    .2622043          0          1
+     FEM_MIN |    312,241    .0920571     .289107          0          1
 -------------+---------------------------------------------------------
+      INFANT |    312,241    .0742664    .2622043          0          1
  PRESCHOOLER |    312,241    .1290157    .3352179          0          1
    SCHOOLAGE |    312,241     .251434    .4338382          0          1
        YOUTH |    312,241    .3536179    .4780931          0          1
      MARRIED |    312,241    .6055611    .4887306          0          1
-         AGE |    312,241    41.46878    12.92601         19         85
 -------------+---------------------------------------------------------
+         AGE |    312,241    41.46878    12.92601         19         85
        AGE_2 |    312,241    1886.741    1092.103        361       7225
              |
        NAICS |
 11 Agricu..  |    312,241    .0137138    .1163002          0          1
 21 Mining..  |    312,241    .0147386    .1205049          0          1
 22 Utilit..  |    312,241    .0098001    .0985094          0          1
-23 Constr..  |    312,241    .0561041     .230123          0          1
 -------------+---------------------------------------------------------
+23 Constr..  |    312,241    .0561041     .230123          0          1
 31-33 Man..  |    312,241    .1044994    .3059078          0          1
 41 Wholes..  |    312,241    .0458396    .2091374          0          1
 44-45 Ret..  |    312,241    .1198722    .3248125          0          1
 48-49 Tra..  |    312,241    .0470822    .2118151          0          1
-51 Inform..  |    312,241    .0238374    .1525425          0          1
 -------------+---------------------------------------------------------
+51 Inform..  |    312,241    .0238374    .1525425          0          1
 52 Financ..  |    312,241     .050477    .2189275          0          1
 53 Real e..  |    312,241    .0143447    .1189074          0          1
 54 Profes..  |    312,241    .0609433    .2392267          0          1
 56 Admini..  |    312,241    .0355783    .1852366          0          1
-61 Educat..  |    312,241    .0877816    .2829774          0          1
 -------------+---------------------------------------------------------
+61 Educat..  |    312,241    .0877816    .2829774          0          1
 62 Health..  |    312,241    .1159649    .3201834          0          1
 71 Arts, ..  |    312,241    .0176274    .1315931          0          1
 72 Accomm..  |    312,241    .0585541    .2347887          0          1
 81 Other..)  |    312,241    .0375095     .190007          0          1
-91 Public..  |    312,241    .0857319    .2799681          0          1
 -------------+---------------------------------------------------------
+91 Public..  |    312,241    .0857319    .2799681          0          1
              |
       HDGREE |
 No certif..  |    312,241    .0955288    .2939444          0          1
 High scho..  |    312,241     .268581    .4432222          0          1
 Trades c..)  |    312,241    .0612636    .2398135          0          1
 Registere..  |    312,241    .0438315    .2047204          0          1
-College,C..  |    312,241    .0255412    .1577622          0          1
 -------------+---------------------------------------------------------
+College,C..  |    312,241    .0255412    .1577622          0          1
 College,C..  |    312,241    .1079743    .3103484          0          1
 College,C..  |    312,241    .0934727    .2910941          0          1
 Universit..  |    312,241    .0498877    .2177134          0          1
 Bachelor'..  |    312,241    .1634731    .3697973          0          1
-Universit..  |    312,241    .0268286    .1615826          0          1
 -------------+---------------------------------------------------------
+Universit..  |    312,241    .0268286    .1615826          0          1
 Degree in..  |    312,241    .0032347    .0567823          0          1
 Master's ..  |    312,241    .0520591    .2221467          0          1
 Earned do..  |    312,241    .0083237     .090854          0          1
              |
           PR |
 Newfoundl..  |    312,241    .0155425    .1236971          0          1
-Prince Ed..  |    312,241    .0042211    .0648328          0          1
 -------------+---------------------------------------------------------
+Prince Ed..  |    312,241    .0042211    .0648328          0          1
 Nova Scotia  |    312,241    .0268543    .1616576          0          1
 New Bruns..  |    312,241     .022742    .1490802          0          1
      Quebec  |    312,241    .2369804    .4252308          0          1
     Ontario  |    312,241    .3931354    .4884473          0          1
-   Manitoba  |    312,241    .0342268    .1818114          0          1
 -------------+---------------------------------------------------------
+   Manitoba  |    312,241    .0342268    .1818114          0          1
 Saskatche~n  |    312,241    .0273603    .1631312          0          1
     Alberta  |    312,241    .1115356    .3147948          0          1
 British C..  |    312,241    .1251854    .3309295          0          1
 Northern ..  |    312,241    .0022162    .0470248          0          1
+-------------+---------------------------------------------------------
              |
      WEEKWRK |    312,241    43.83447    12.50029          5         51
+    MINORITY |    312,241    .1839188    .3874186          0          1
 
 . 
-. reg lnWAGES FEMALE FEM_AGE FEM_AGE_2 FEM_MAR FEM_INFANT FEM_PRESCHOOLER FEM_SCHOOL
-> AGE FEM_YOUTH INFANT PRESCHOOLER SCHOOLAGE YOUTH MARRIED AGE AGE_2 i.NAIC i.HDGREE
->  i.PR WEEKWRK
+. reg lnWAGES FEMALE FEM_AGE FEM_AGE_2 FEM_MAR FEM_INFANT FEM_PRESCHOOLER FEM_SCHOOLAGE FEM_YOUTH FEM_MIN INFANT PRESCHOOLER SCHOOLAGE 
+> YOUTH MARRIED AGE AGE_2 MINORITY i.NAIC i.HDGREE i.PR WEEKWRK
 
       Source |       SS           df       MS      Number of obs   =   312,241
--------------+----------------------------------   F(56, 312184)   =   6022.14
-       Model |  176116.852        56  3144.94378   Prob > F        =    0.0000
-    Residual |  163032.057   312,184  .522230663   R-squared       =    0.5193
--------------+----------------------------------   Adj R-squared   =    0.5192
-       Total |  339148.909   312,240  1.08618021   Root MSE        =    .72266
+-------------+----------------------------------   F(58, 312182)   =   5951.85
+       Model |  178093.441        58  3070.57656   Prob > F        =    0.0000
+    Residual |  161055.469   312,182  .515902482   R-squared       =    0.5251
+-------------+----------------------------------   Adj R-squared   =    0.5250
+       Total |  339148.909   312,240  1.08618021   Root MSE        =    .71826
 
------------------------------------------------------------------------------------
-          lnWAGES |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
-------------------+----------------------------------------------------------------
-           FEMALE |   .1017808   .0266915     3.81   0.000     .0494662    .1540955
-          FEM_AGE |  -.0119428   .0013783    -8.66   0.000    -.0146443   -.0092414
-        FEM_AGE_2 |   .0000999   .0000162     6.17   0.000     .0000682    .0001316
-          FEM_MAR |  -.0986795   .0063373   -15.57   0.000    -.1111004   -.0862586
-       FEM_INFANT |  -.1044042    .010697    -9.76   0.000      -.12537   -.0834383
-  FEM_PRESCHOOLER |  -.0748588   .0085139    -8.79   0.000    -.0915459   -.0581717
-    FEM_SCHOOLAGE |  -.0822467   .0064344   -12.78   0.000     -.094858   -.0696354
-        FEM_YOUTH |   -.041937    .005768    -7.27   0.000    -.0532422   -.0306319
-           INFANT |   .0595821   .0072571     8.21   0.000     .0453584    .0738058
-      PRESCHOOLER |   .0469933   .0059188     7.94   0.000     .0353926     .058594
-        SCHOOLAGE |  -.0025159   .0045696    -0.55   0.582    -.0114723    .0064405
-            YOUTH |  -.0113458   .0041429    -2.74   0.006    -.0194659   -.0032258
-          MARRIED |   .0835687   .0047368    17.64   0.000     .0742846    .0928528
-              AGE |   .1127972   .0009738   115.84   0.000     .1108887    .1147057
-            AGE_2 |  -.0011584   .0000112  -103.72   0.000    -.0011803   -.0011365
-                  |
-            NAICS |
-21 Mining, qua..  |    .772184   .0155181    49.76   0.000     .7417689     .802599
-    22 Utilities  |   .6103851   .0172173    35.45   0.000     .5766397    .6441304
- 23 Construction  |   .2752367   .0124018    22.19   0.000     .2509294    .2995439
-31-33 Manufact..  |   .2193221   .0118237    18.55   0.000     .1961479    .2424963
-41 Wholesale t..  |   .2516518   .0126743    19.86   0.000     .2268106     .276493
-44-45 Retail t..  |  -.1356124   .0117494   -11.54   0.000    -.1586409   -.1125839
-48-49 Transpor..  |   .1518873   .0126063    12.05   0.000     .1271794    .1765952
-51 Information..  |   .2729451   .0139882    19.51   0.000     .2455287    .3003616
-52 Finance and..  |   .3645073   .0126388    28.84   0.000     .3397356     .389279
-53 Real estate..  |   .0563464   .0155208     3.63   0.000     .0259261    .0867666
-54 Professiona..  |   .2654935    .012405    21.40   0.000     .2411801    .2898069
-56 Administrat..  |  -.0975459   .0130517    -7.47   0.000    -.1231269   -.0719648
-61 Educational..  |   .1135314   .0121609     9.34   0.000     .0896963    .1373664
-62 Health care..  |   .1497641   .0119144    12.57   0.000     .1264121     .173116
-71 Arts, enter..  |  -.1190825   .0147979    -8.05   0.000    -.1480859   -.0900791
-72 Accommodati..  |  -.2910175   .0123766   -23.51   0.000    -.3152753   -.2667598
-81 Other serv..)  |  -.0588274   .0129984    -4.53   0.000    -.0843038    -.033351
-91 Public admi..  |    .358667   .0120297    29.82   0.000     .3350892    .3822449
-                  |
-           HDGREE |
-High school di..  |   .1117166    .004951    22.56   0.000     .1020128    .1214204
-Trades certif..)  |     .12779   .0067993    18.79   0.000     .1144637    .1411164
-Registered App..  |   .2715098   .0076126    35.67   0.000     .2565893    .2864302
-College,CEGEPo..  |     .16706     .00923    18.10   0.000     .1489695    .1851505
-College,CEGEPo..  |   .2398793   .0059066    40.61   0.000     .2283025    .2514561
-College,CEGEPo..  |    .343549   .0061285    56.06   0.000     .3315372    .3555607
-University cer..  |     .33469   .0072851    45.94   0.000     .3204114    .3489687
-Bachelor's deg..  |   .5085557   .0056107    90.64   0.000      .497559    .5195525
-University cer..  |   .5419771   .0092264    58.74   0.000     .5238935    .5600607
-Degree in medi..  |   .7225552   .0232943    31.02   0.000     .6768991    .7682113
- Master's degree  |   .5863113   .0073857    79.38   0.000     .5718355     .600787
-Earned doctora..  |   .7497299   .0151149    49.60   0.000     .7201052    .7793547
-                  |
-               PR |
-Prince Edward ..  |  -.0361096   .0224629    -1.61   0.108    -.0801362    .0079171
-     Nova Scotia  |  -.0481073   .0130492    -3.69   0.000    -.0736834   -.0225312
-   New Brunswick  |  -.0386508    .013471    -2.87   0.004    -.0650537    -.012248
-          Quebec  |  -.0291978   .0107738    -2.71   0.007    -.0503142   -.0080813
-         Ontario  |   .0409926   .0106169     3.86   0.000     .0201838    .0618014
-        Manitoba  |   -.007167   .0125351    -0.57   0.567    -.0317354    .0174015
-    Saskatchewan  |   .0932907    .013013     7.17   0.000     .0677856    .1187958
-         Alberta  |   .1795959   .0111066    16.17   0.000     .1578273    .2013645
-British Columbia  |   .0279928    .011025     2.54   0.011      .006384    .0496015
- Northern Canada  |   .2731311   .0294213     9.28   0.000     .2154663    .3307959
-                  |
-          WEEKWRK |   .0345147   .0001107   311.85   0.000     .0342978    .0347317
-            _cons |     6.0206    .024198   248.81   0.000     5.973173    6.068028
------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------
+                                                             lnWAGES |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+---------------------------------------------------------------------+----------------------------------------------------------------
+                                                              FEMALE |   .0760224   .0265567     2.86   0.004     .0239721    .1280727
+                                                             FEM_AGE |  -.0119239   .0013699    -8.70   0.000     -.014609   -.0092389
+                                                           FEM_AGE_2 |   .0001054   .0000161     6.55   0.000     .0000738    .0001369
+                                                             FEM_MAR |  -.1161979   .0063381   -18.33   0.000    -.1286204   -.1037754
+                                                          FEM_INFANT |  -.1099014   .0106329   -10.34   0.000    -.1307416   -.0890613
+                                                     FEM_PRESCHOOLER |  -.0791456   .0084628    -9.35   0.000    -.0957324   -.0625588
+                                                       FEM_SCHOOLAGE |  -.0858468   .0063973   -13.42   0.000    -.0983854   -.0733082
+                                                           FEM_YOUTH |  -.0466985   .0057383    -8.14   0.000    -.0579455   -.0354515
+                                                             FEM_MIN |   .1402386   .0067311    20.83   0.000     .1270459    .1534313
+                                                              INFANT |   .0602436    .007213     8.35   0.000     .0461063    .0743808
+                                                         PRESCHOOLER |   .0522269   .0058835     8.88   0.000     .0406953    .0637585
+                                                           SCHOOLAGE |   .0042962   .0045435     0.95   0.344     -.004609    .0132014
+                                                               YOUTH |  -.0013586   .0041216    -0.33   0.742    -.0094369    .0067197
+                                                             MARRIED |   .1075206   .0047321    22.72   0.000     .0982458    .1167954
+                                                                 AGE |   .1134149   .0009679   117.18   0.000     .1115178    .1153119
+                                                               AGE_2 |  -.0011736   .0000111  -105.69   0.000    -.0011954   -.0011519
+                                                            MINORITY |  -.2754537   .0048855   -56.38   0.000    -.2850291   -.2658783
+                                                                     |
+                                                               NAICS |
+                   21 Mining, quarrying, and oil and gas extraction  |   .7662885   .0154241    49.68   0.000     .7360577    .7965194
+                                                       22 Utilities  |   .6100606   .0171128    35.65   0.000     .5765201    .6436011
+                                                    23 Construction  |   .2779551   .0123266    22.55   0.000     .2537953    .3021149
+                                                31-33 Manufacturing  |   .2485434   .0117615    21.13   0.000     .2254912    .2715956
+                                                 41 Wholesale trade  |   .2724029   .0126018    21.62   0.000     .2477037    .2971022
+                                                 44-45 Retail trade  |  -.1109551   .0116857    -9.49   0.000    -.1338589   -.0880514
+                               48-49 Transportation and warehousing  |    .174829   .0125358    13.95   0.000     .1502591    .1993989
+                             51 Information and cultural industries  |    .295028   .0139088    21.21   0.000     .2677672    .3222888
+52 Finance and insurance/55 Management of companies and enterprises  |    .391001   .0125698    31.11   0.000     .3663646    .4156374
+                              53 Real estate and rental and leasing  |    .076736   .0154307     4.97   0.000     .0464922    .1069798
+                 54 Professional, scientific and technical services  |    .287617    .012336    23.32   0.000     .2634388    .3117952
+56 Administrative and support, waste management and remediation s..  |  -.0623775   .0129852    -4.80   0.000     -.087828   -.0369269
+                                            61 Educational services  |   .1109792   .0120929     9.18   0.000     .0872776    .1346809
+                               62 Health care and social assistance  |   .1687604   .0118475    14.24   0.000     .1455396    .1919812
+                              71 Arts, entertainment and recreation  |  -.1102761   .0147105    -7.50   0.000    -.1391083   -.0814439
+                                 72 Accommodation and food services  |  -.2493133   .0123203   -20.24   0.000    -.2734607   -.2251658
+                   81 Other services (except public administration)  |  -.0382077    .012924    -2.96   0.003    -.0635385    -.012877
+                                           91 Public administration  |   .3607744   .0119582    30.17   0.000     .3373367     .384212
+                                                                     |
+                                                              HDGREE |
+                                  High school diploma or equivalent  |   .1085499   .0049223    22.05   0.000     .0989024    .1181974
+          Trades certificate or diploma (other than apprenticeship)  |   .1222845   .0067586    18.09   0.000      .109038    .1355311
+                              Registered Apprenticeship certificate  |    .254775   .0075721    33.65   0.000      .239934     .269616
+College,CEGEPorothernon-universitycertificatordiplomfromaprgrmof3..  |   .1614539   .0091762    17.59   0.000     .1434687     .179439
+College,CEGEPorothernon-universitycertificateordiplomafromaprogra..  |   .2339625   .0058733    39.84   0.000     .2224511    .2454739
+College,CEGEPorothernon-universitycertificateordiplomfromaprogram..  |   .3436032   .0060916    56.41   0.000     .3316638    .3555426
+             University certificate or diploma below bachelor level  |   .3666444   .0072601    50.50   0.000     .3524148    .3808739
+                                                  Bachelor's degree  |   .5295331    .005587    94.78   0.000     .5185826    .5404835
+             University certificate or diploma above bachelor level  |   .5689581   .0091808    61.97   0.000     .5509639    .5869522
+    Degree in medicine, dentistry, veterinary medicine or optometry  |   .7644718   .0231632    33.00   0.000     .7190726    .8098709
+                                                    Master's degree  |   .6152277   .0073557    83.64   0.000     .6008108    .6296447
+                                            Earned doctorate degree  |   .7871355   .0150352    52.35   0.000      .757667    .8166041
+                                                                     |
+                                                                  PR |
+                                               Prince Edward Island  |  -.0327369   .0223265    -1.47   0.143    -.0764961    .0110224
+                                                        Nova Scotia  |  -.0435935   .0129702    -3.36   0.001    -.0690147   -.0181723
+                                                      New Brunswick  |  -.0374015   .0133892    -2.79   0.005     -.063644    -.011159
+                                                             Quebec  |  -.0119529   .0107124    -1.12   0.265    -.0329489    .0090432
+                                                            Ontario  |   .0847346   .0105798     8.01   0.000     .0639985    .1054707
+                                                           Manitoba  |   .0181066   .0124667     1.45   0.146    -.0063278     .042541
+                                                       Saskatchewan  |   .1035812   .0129351     8.01   0.000     .0782288    .1289336
+                                                            Alberta  |   .2128817   .0110538    19.26   0.000     .1912166    .2345467
+                                                   British Columbia  |    .079482   .0109952     7.23   0.000     .0579317    .1010324
+                                                    Northern Canada  |   .2818568   .0292428     9.64   0.000     .2245418    .3391719
+                                                                     |
+                                                             WEEKWRK |   .0341948   .0001101   310.47   0.000      .033979    .0344107
+                                                               _cons |   6.013263   .0240533   250.00   0.000     5.966119    6.060407
+--------------------------------------------------------------------------------------------------------------------------------------
 
+. 
+. outreg2 using "myoutreg.xls", append ctitle(Model2) label dec(3)
+myoutreg.xls
+dir : seeout
+
+. 
 . log close
       name:  <unnamed>
-       log:  /Users/jensenxu/Desktop/stata/Term paper/Model.log
+       log:  /Users/jensenxu/Desktop/stata_clone/Model.log
   log type:  text
- closed on:  20 Nov 2019, 13:30:47
-------------------------------------------------------------------------------------
+ closed on:  24 Nov 2019, 20:39:48
+---------------------------------------------------------------------------------------------------------------------------------------

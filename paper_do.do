@@ -1,4 +1,4 @@
-capture log using "/Users/jensenxu/Desktop/stata/Term paper/Model.log", replace
+capture log using "/Users/jensenxu/Desktop/stata_clone/Model.log", replace
 use "/Users/jensenxu/Desktop/2011Census/nhs2011_pumf.dta"
 
 *Clean up the data
@@ -19,6 +19,7 @@ label list SEX
 *Label the new dummy
 label define femaleLAB 1 "Female" 0 "Male"
 label values FEMALE femaleLAB
+label variable FEMALE "Female"
 
 *Check if the indicator has been defined correctly
 tab SEX FEMALE			
@@ -59,8 +60,11 @@ label variable AGE "age"
 
 *Variables for robustness check
 gen FEM_AGE = FEMALE*AGE
+label variable FEM_AGE "Female*Age"
 gen AGE_2 = AGE^2
+label variable AGE_2 "Age^2"
 gen FEM_AGE_2 = FEMALE*AGE_2
+label variable FEM_AGE_2 "Female*Age^2"
 ************************************************
 *Create a variable for potential experience
 
@@ -76,15 +80,19 @@ replace SCHOOLYRS = 17 if HDGREE == 10
 replace SCHOOLYRS = 21 if HDGREE == 11 | HDGREE == 13
 replace SCHOOLYRS = 18 if HDGREE == 12
 gen POTENEXP = AGE - SCHOOLYRS - 6
+label variable POTENEXP "Potential experience"
 *A negative value is most likely to mean that the individual finished the degree faster than expected
 *Drop these negative potential experiences because they don't fit in the context
 drop if POTENEXP <= 0 | POTENEXP == . 
 
 *Create a quadratic term
 gen POTENEXP_2 = POTENEXP^2
+label variable POTENEXP_2 "Potential experience^2"
 *Create interactions
 gen FEM_POTENEXP = FEMALE*POTENEXP
+label variable FEM_POTENEXP "Female*Potential experience"
 gen FEM_POTENEXP_2 = FEMALE*POTENEXP_2
+label variable FEM_POTENEXP_2 "Female*Potential experience^2"
 *************************************************
 
 
@@ -115,11 +123,19 @@ label values INFANT childlab
 label values PRESCHOOLER childlab
 label values SCHOOLAGE childlab
 label values YOUTH childlab
+label variable INFANT "Infant"
+label variable PRESCHOOLER "preschooler"
+label variable SCHOOLAGE "school-age children"
+label variable YOUTH "Youth-age children" 
 *Interact with gender
 gen FEM_INFANT = FEMALE*INFANT
+label variable FEM_INFANT "Female*Infant"
 gen FEM_PRESCHOOLER = FEMALE*PRESCHOOLER
+label variable FEM_PRESCHOOLER "Female*Preschooler"
 gen FEM_SCHOOLAGE = FEMALE*SCHOOLAGE
+label variable FEM_SCHOOLAGE "Female*Schoolage"
 gen FEM_YOUTH = FEMALE*YOUTH
+label variable FEM_YOUTH "Female*Youth"
 *******************************************
 
 *drop unavailable data
@@ -156,17 +172,36 @@ label define MARRIEDlab 0 "not married" 1 "married"
 label values MARRIED MARRIEDlab
 *Interact with gender
 gen FEM_MAR = FEMALE*MARRIED
+label variable FEM_MAR "Female*Marital status"
+
+*Visible minority
+*get rid off unavailable data
+drop if VISMIN == 88 | VISMIN == .
+*create a dummy for visible minority
+gen MINORITY = 1
+replace MINORITY = 0 if VISMIN == 13
+label define minlab 1 "Visible minority" 0 "Not a visible minority"
+label values MINORITY minlab
+label variable MINORITY "Visible minority"
+*Interacts with gender
+gen FEM_MIN = FEMALE*MINORITY
+label variable FEM_MIN "Female*Minority"
 
 *Descriptive statistics
-summ lnWAGES FEMALE FEM_POTENEXP FEM_POTENEXP_2 FEM_MAR FEM_INFANT FEM_PRESCHOOLER FEM_SCHOOLAGE FEM_YOUTH INFANT PRESCHOOLER SCHOOLAGE YOUTH MARRIED POTENEXP POTENEXP_2 i.NAIC i.HDGREE i.PR WEEKWRK
-	
+summ lnWAGES FEMALE FEM_POTENEXP FEM_POTENEXP_2 FEM_MAR FEM_INFANT FEM_PRESCHOOLER FEM_SCHOOLAGE FEM_YOUTH FEM_MIN INFANT PRESCHOOLER SCHOOLAGE YOUTH MARRIED POTENEXP POTENEXP_2 i.NAIC i.HDGREE i.PR WEEKWRK MINORITY
+
 *Fit a regression model
-reg lnWAGES FEMALE FEM_POTENEXP FEM_POTENEXP_2 FEM_MAR FEM_INFANT FEM_PRESCHOOLER FEM_SCHOOLAGE FEM_YOUTH INFANT PRESCHOOLER SCHOOLAGE YOUTH MARRIED POTENEXP POTENEXP_2 i.NAIC i.HDGREE i.PR WEEKWRK
+reg lnWAGES FEMALE FEM_POTENEXP FEM_POTENEXP_2 FEM_MAR FEM_INFANT FEM_PRESCHOOLER FEM_SCHOOLAGE FEM_YOUTH FEM_MIN INFANT PRESCHOOLER SCHOOLAGE YOUTH MARRIED POTENEXP POTENEXP_2 MINORITY i.NAIC i.HDGREE i.PR WEEKWRK
 estimates store model_int
 
-*Robustness check
-summ lnWAGES FEMALE FEM_AGE FEM_AGE_2 FEM_MAR FEM_INFANT FEM_PRESCHOOLER FEM_SCHOOLAGE FEM_YOUTH INFANT PRESCHOOLER SCHOOLAGE YOUTH MARRIED AGE AGE_2 i.NAIC i.HDGREE i.PR WEEKWRK
+outreg2 using "myoutreg.xls", replace ctitle(Model1) label dec(3)
 
-reg lnWAGES FEMALE FEM_AGE FEM_AGE_2 FEM_MAR FEM_INFANT FEM_PRESCHOOLER FEM_SCHOOLAGE FEM_YOUTH INFANT PRESCHOOLER SCHOOLAGE YOUTH MARRIED AGE AGE_2 i.NAIC i.HDGREE i.PR WEEKWRK
+*Robustness check
+summ lnWAGES FEMALE FEM_AGE FEM_AGE_2 FEM_MAR FEM_INFANT FEM_PRESCHOOLER FEM_SCHOOLAGE FEM_YOUTH FEM_MIN INFANT PRESCHOOLER SCHOOLAGE YOUTH MARRIED AGE AGE_2 i.NAIC i.HDGREE i.PR WEEKWRK MINORITY
+
+reg lnWAGES FEMALE FEM_AGE FEM_AGE_2 FEM_MAR FEM_INFANT FEM_PRESCHOOLER FEM_SCHOOLAGE FEM_YOUTH FEM_MIN INFANT PRESCHOOLER SCHOOLAGE YOUTH MARRIED AGE AGE_2 MINORITY i.NAIC i.HDGREE i.PR WEEKWRK
+
+outreg2 using "myoutreg.xls", append ctitle(Model2) label dec(3)
+
 log close
 
