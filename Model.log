@@ -158,7 +158,7 @@ AGEGRP:
 . replace AGE = 85 if AGEGRP == 21
 (37 real changes made)
 
-. label variable AGE "age"
+. label variable AGE "Age"
 
 . 
 . *Variables for robustness check
@@ -432,7 +432,7 @@ NAICS:
 . replace MARRIED = 1 if MARSTH == 2 | MARSTH == 4
 (189,081 real changes made)
 
-. label variable MARRIED "Marital status"
+. label variable MARRIED "Married"
 
 . label define MARRIEDlab 0 "not married" 1 "married"
 
@@ -441,7 +441,7 @@ NAICS:
 . *Interact with gender
 . gen FEM_MAR = FEMALE*MARRIED
 
-. label variable FEM_MAR "Female*Marital status"
+. label variable FEM_MAR "Female*Married"
 
 . 
 . *Visible minority
@@ -826,5 +826,5 @@ dir : seeout
       name:  <unnamed>
        log:  /Users/jensenxu/Desktop/stata_clone/Model.log
   log type:  text
- closed on:  24 Nov 2019, 20:39:48
+ closed on:  25 Nov 2019, 13:11:58
 ---------------------------------------------------------------------------------------------------------------------------------------

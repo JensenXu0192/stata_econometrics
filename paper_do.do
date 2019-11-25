@@ -56,7 +56,7 @@ replace AGE = 72 if AGEGRP == 18
 replace AGE = 77 if AGEGRP == 19
 replace AGE = 82 if AGEGRP == 20
 replace AGE = 85 if AGEGRP == 21
-label variable AGE "age"
+label variable AGE "Age"
 
 *Variables for robustness check
 gen FEM_AGE = FEMALE*AGE
@@ -167,12 +167,12 @@ label variable WEEKWRK "weeks worked in 2010"
 drop if MARSTH == .
 gen MARRIED = 0
 replace MARRIED = 1 if MARSTH == 2 | MARSTH == 4
-label variable MARRIED "Marital status"
+label variable MARRIED "Married"
 label define MARRIEDlab 0 "not married" 1 "married"
 label values MARRIED MARRIEDlab
 *Interact with gender
 gen FEM_MAR = FEMALE*MARRIED
-label variable FEM_MAR "Female*Marital status"
+label variable FEM_MAR "Female*Married"
 
 *Visible minority
 *get rid off unavailable data

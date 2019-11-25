@@ -7,7 +7,7 @@ FEM_POTENEXP	Female*Potential experience	-0.009***
 		(0.001)	
 FEM_POTENEXP_2	Female*Potential experience^2	0.000***	
 		(0.000)	
-FEM_MAR	Female*Marital status	-0.110***	-0.116***
+FEM_MAR	Female*Married	-0.110***	-0.116***
 		(0.006)	(0.006)
 FEM_INFANT	Female*Infant	-0.115***	-0.110***
 		(0.011)	(0.011)
@@ -27,7 +27,7 @@ SCHOOLAGE	school-age children	0.006	0.004
 		(0.005)	(0.005)
 YOUTH	Youth-age children	-0.029***	-0.001
 		(0.004)	(0.004)
-MARRIED	Marital status	0.114***	0.108***
+MARRIED	Married	0.114***	0.108***
 		(0.005)	(0.005)
 POTENEXP	Potential experience	0.067***	
 		(0.001)	
@@ -121,7 +121,7 @@ FEM_AGE	Female*Age		-0.012***
 			(0.001)
 FEM_AGE_2	Female*Age^2		0.000***
 			(0.000)
-AGE	age		0.113***
+AGE	Age		0.113***
 			(0.001)
 AGE_2	Age^2		-0.001***
 			(0.000)
