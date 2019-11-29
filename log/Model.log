@@ -1,19 +1,5 @@
 
 . use "/Users/jensenxu/Desktop/2011Census/nhs2011_pumf.dta"
-no; dataset in memory has changed since last saved
-r(4);
-
-end of do-file
-
-r(4);
-
-. clear
-
-. do "/Users/jensenxu/Desktop/stata_clone/paper_do.do"
-
-. capture log using "/Users/jensenxu/Desktop/stata_clone/Model.log", replace
-
-. use "/Users/jensenxu/Desktop/2011Census/nhs2011_pumf.dta"
 (Written by R.              )
 
 . 
@@ -481,8 +467,7 @@ NAICS:
 . label variable FEM_MIN "Female*Minority"
 
 . 
-. *Descriptive statistics
-.        
+. *Descriptive statistics      
 . estpost tabstat lnWAGES FEMALE FEM_POTENEXP FEM_POTENEXP_2 FEM_MAR FEM_INFANT FEM_PRESCHOOLER FEM_SCHOOLAGE FEM_YOUTH FEM_MIN INFA
 > NT PRESCHOOLER SCHOOLAGE YOUTH MARRIED POTENEXP POTENEXP_2 NAIC HDGREE PR WEEKWRK MINORITY, listwise statistics(mean sd count min 
 > max) columns(statistics)
@@ -517,10 +502,8 @@ FEM_SCHOOL~E |   .128111   .3342139     310910          0          1
     MINORITY |  .1804252   .3845418     310910          0          1 
 
 . esttab . using "sumst_int.rtf", replace cells("mean(fmt(a3)) sd count min max") title(Table 1) label noobs
-(note: file sumst_int.rtf not found)
 (output written to sumst_int.rtf)
 
-. 
 . 
 . *Fit a regression model
 . reg lnWAGES FEMALE FEM_POTENEXP FEM_POTENEXP_2 FEM_MAR FEM_INFANT FEM_PRESCHOOLER FEM_SCHOOLAGE FEM_YOUTH FEM_MIN INFANT PRESCHOOL
@@ -644,7 +627,6 @@ FEM_SCHOOL~E |   .128111   .3342139     310910          0          1
     MINORITY |  .1804252   .3845418     310910          0          1 
 
 . esttab using "sumst_rob.rtf", replace cells("mean(fmt(a3)) sd count min max") title(Table 2) label noobs
-(note: file sumst_rob.rtf not found)
 (output written to sumst_rob.rtf)
 
 . 
@@ -736,7 +718,6 @@ College,CEGEPorothernon-universitycertificateordiplomfromaprog..  |   .3436657  
 . esttab model_int model_rob using "regout.rtf", replace label compress order(FEMALE FEM_POTENEXP FEM_POTENEXP_2 FEM_AGE FEM_AGE_2 F
 > EM_MAR FEM_INFANT FEM_PRESCHOOLER FEM_SCHOOLAGE FEM_YOUTH FEM_MIN FEM_MAR FEM_INFANT FEM_PRESCHOOLER FEM_SCHOOLAGE FEM_YOUTH FEM_M
 > IN YOUTH MARRIED POTENEXP POTENEXP_2 AGE AGE_2 MINORITY) b(3) title(Table 3) varwidth(40)
-(note: file regout.rtf not found)
 (output written to regout.rtf)
 
 . 
@@ -745,5 +726,5 @@ College,CEGEPorothernon-universitycertificateordiplomfromaprog..  |   .3436657  
       name:  <unnamed>
        log:  /Users/jensenxu/Desktop/stata_clone/Model.log
   log type:  text
- closed on:  27 Nov 2019, 16:24:07
+ closed on:  29 Nov 2019, 12:24:51
 ------------------------------------------------------------------------------------------------------------------------------------

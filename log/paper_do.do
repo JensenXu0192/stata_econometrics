@@ -187,11 +187,9 @@ label variable MINORITY "Minority"
 gen FEM_MIN = FEMALE*MINORITY
 label variable FEM_MIN "Female*Minority"
 
-*Descriptive statistics
-       
+*Descriptive statistics      
 estpost tabstat lnWAGES FEMALE FEM_POTENEXP FEM_POTENEXP_2 FEM_MAR FEM_INFANT FEM_PRESCHOOLER FEM_SCHOOLAGE FEM_YOUTH FEM_MIN INFANT PRESCHOOLER SCHOOLAGE YOUTH MARRIED POTENEXP POTENEXP_2 NAIC HDGREE PR WEEKWRK MINORITY, listwise statistics(mean sd count min max) columns(statistics)
 esttab . using "sumst_int.rtf", replace cells("mean(fmt(a3)) sd count min max") title(Table 1) label noobs
-
 
 *Fit a regression model
 reg lnWAGES FEMALE FEM_POTENEXP FEM_POTENEXP_2 FEM_MAR FEM_INFANT FEM_PRESCHOOLER FEM_SCHOOLAGE FEM_YOUTH FEM_MIN INFANT PRESCHOOLER SCHOOLAGE YOUTH MARRIED POTENEXP POTENEXP_2 i.NAIC i.HDGREE i.PR WEEKWRK MINORITY
